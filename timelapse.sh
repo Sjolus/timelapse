@@ -19,7 +19,6 @@ fi
 PROJECT="$1"
 CONFIG="$BASEDIR/$PROJECT.conf"
 
-
 if [ -f $CONFIG ]; then
 	source $CONFIG
 else
@@ -36,12 +35,11 @@ FILE="$IMGDIR/$DATE.jpg"
 WGETTHIS="$(echo $URL)"
 LOGFILE="$BASEDIR/$PROJECT.log"
 
-echo "$(date) - Initiating Timelapse run" >> $LOGFILE
-
 mkdir -p $TMPDIR
 mkdir -p $VIDDIR
 mkdir -p $IMGDIR
 
+echo "$(date) - Initiating Timelapse run" >> $LOGFILE
 echo "$(date) - Sleeping before wget and jpegoptim-run" >> $LOGFILE
 sleep 15
 wget -nv $WGETTHIS -O $FILE &>> $LOGFILE
