@@ -16,7 +16,9 @@ if [ "$#" -ne 1 ]; then
 	exit 2
 fi
 
-CONFIG="$BASEDIR/$1.conf"
+PROJECT="$1"
+CONFIG="$BASEDIR/$PROJECT.conf"
+
 
 if [ -f $CONFIG ]; then
 	source $CONFIG
