@@ -40,15 +40,16 @@ mkdir -p $VIDDIR
 mkdir -p $IMGDIR
 
 echo "$(date) - Initiating Timelapse run" >> $LOGFILE
-echo "$(date) - Sleeping before wget and jpegoptim-run" >> $LOGFILE
-sleep 15
+echo "$(date) - wget and jpegoptim-run" >> $LOGFILE
 wget -nv $WGETTHIS -O $FILE &>> $LOGFILE
-jpegoptim --quiet --max=50 $FILE > /dev/null 2>&1
+jpegoptim --quiet --max=50 $FILE >> $LOGFILE
 
 echo "$(date) - Compiling list of images to use" >> $LOGFILE
 TIMELAPSEFILES=$(find $BASEIMGDIR -type f | sort)
 
 echo "$(date) - Starting timelapse-creation" >> $LOGFILE
+echo "$(date) - Cropping images if too large" >> $LOGFILE
+
 count=0
 for IMG in $TIMELAPSEFILES; do
         NEW=$(printf "FRAME_%05d.jpg" $count)
@@ -60,15 +61,18 @@ WEBM="$VIDDIR/timelapse.webm"
 MP4="$VIDDIR/timelapse.mp4"
 
 echo "$(date) - Image conversion completed. Compiling movies" >> $LOGFILE
+echo "$(date) - 1st pass webm" >> $LOGFILE
+avconv -i $TMPDIR/FRAME_%05d.jpg -loglevel error -threads 1 -s 1920x1080 -preset libvpx-1080p -b 4800k -pass 1 -an -f webm -y "$WEBM.tmp" >> $LOGFILE 2>&1
+echo "$(date) - 2nd pass webm" >> $LOGFILE
+avconv -i $TMPDIR/FRAME_%05d.jpg -loglevel error -threads 1 -preset libvpx-1080p -b 4800k -pass 2 -an -f webm -y "$WEBM.tmp" >> $LOGFILE 2>&1
+echo "$(date) - webm to mp4" >> $LOGFILE
+avconv -i $WEBM.tmp -loglevel error -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" -b 2048k -r 30 -c:a libmp3lame -f mp4 -y "$MP4.tmp" >> $LOGFILE 2>&1
 
-avconv -i $TMPDIR/FRAME_%05d.jpg -threads 1 -s 1920x1080 -preset libvpx-1080p -b 4800k -pass 1 -an -f webm -y "$WEBM.tmp" > /dev/null 2>&1
-avconv -i $TMPDIR/FRAME_%05d.jpg -threads 1 -preset libvpx-1080p -b 4800k -pass 2 -an -f webm -y "$WEBM.tmp" > /dev/null 2>&1
-avconv -i $WEBM.tmp -b 2048k -r 30 -c:a libmp3lame -f mp4 -y "$MP4.tmp" > /dev/null 2>&1
+echo "$(date) - Moving temporary files to right places" >> $LOGFILE
 mv $WEBM.tmp $WEBM
 mv $MP4.tmp $MP4
 
 echo "$(date) - Movie creation completed, removing TMPDIR" >> $LOGFILE
-
 rm -rf $TMPDIR
 
 echo "$(date) - Timelapse run completed" >> $LOGFILE
