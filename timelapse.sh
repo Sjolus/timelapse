@@ -63,7 +63,7 @@ echo "$(date) - Image conversion completed. Compiling movies" >> $LOGFILE
 
 avconv -i $TMPDIR/FRAME_%05d.jpg -threads 1 -s 1920x1080 -preset libvpx-1080p -b 4800k -pass 1 -an -f webm -y "$WEBM.tmp" > /dev/null 2>&1
 avconv -i $TMPDIR/FRAME_%05d.jpg -threads 1 -preset libvpx-1080p -b 4800k -pass 2 -an -f webm -y "$WEBM.tmp" > /dev/null 2>&1
-avconv -i $WEBM.tmp -b 2048k -r 30 -c:a libmp3lame -y "$MP4.tmp" > /dev/null 2>&1
+avconv -i $WEBM.tmp -b 2048k -r 30 -c:a libmp3lame -f mp4 -y "$MP4.tmp" > /dev/null 2>&1
 mv $WEBM.tmp $WEBM
 mv $MP4.tmp $MP4
 
