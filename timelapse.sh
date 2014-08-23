@@ -11,7 +11,7 @@ MONTH=$(date +%m)
 DAY=$(date +%d)
 
 # Load specified config if it exists and check for project and url after loading it
-if [ "$#" -ne 1 ]; then
+if [ "$#" -eq 0 ]; then
 	echo "No config file argument found"
 	exit 2
 fi
@@ -45,7 +45,16 @@ wget -nv $WGETTHIS -O $FILE &>> $LOGFILE
 jpegoptim --quiet --max=50 $FILE >> $LOGFILE
 
 echo "$(date) - Compiling list of images to use" >> $LOGFILE
-TIMELAPSEFILES=$(find $BASEIMGDIR -type f | sort)
+if [ -z $2 ]; then
+	AGE=3
+elif [ "$2" -eq "$2" ] 2>/dev/null; then
+	AGE=$2
+else
+	echo"$(date) - Age argument poorly specified ($2). Setting to 3 days"
+	AGE=3	
+fi
+echo "$(date) - Including all files newer than $AGE days" >> $LOGFILE
+TIMELAPSEFILES=$(find $BASEIMGDIR -type f -mtime $AGE | sort)
 
 echo "$(date) - Starting timelapse-creation" >> $LOGFILE
 echo "$(date) - Cropping images if too large" >> $LOGFILE
