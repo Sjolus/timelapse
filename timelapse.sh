@@ -45,16 +45,17 @@ wget -nv $WGETTHIS -O $FILE &>> $LOGFILE
 jpegoptim --quiet --max=50 $FILE >> $LOGFILE
 
 echo "$(date) - Compiling list of images to use" >> $LOGFILE
-if [ -z $2 ]; then
+AGEARGUMENT=${2:-}
+if [ -z $AGEARGUMENT ]; then
 	AGE=3
-elif [ "$2" -eq "$2" ] 2>/dev/null; then
-	AGE=$2
+elif [ "$AGEARGUMENT" -eq "$AGEARGUMENT" ] 2>/dev/null; then
+	AGE=$AGEARGUMENT
 else
-	echo"$(date) - Age argument poorly specified ($2). Setting to 3 days"
+	echo"$(date) - Age argument poorly specified ($AGEARGUMENT). Setting to 3 days"
 	AGE=3	
 fi
 echo "$(date) - Including all files newer than $AGE days" >> $LOGFILE
-TIMELAPSEFILES=$(find $BASEIMGDIR -type f -mtime $AGE | sort)
+TIMELAPSEFILES=$(find $BASEIMGDIR -type f -mtime -$AGE | sort)
 
 echo "$(date) - Starting timelapse-creation" >> $LOGFILE
 echo "$(date) - Cropping images if too large" >> $LOGFILE
