@@ -54,8 +54,8 @@ else
 	echo"$(date) - Age argument poorly specified ($AGEARGUMENT). Setting to 3 days"
 	AGE=3	
 fi
-echo "$(date) - Including all files newer than $AGE days" >> $LOGFILE
-TIMELAPSEFILES=$(find $BASEIMGDIR -type f -mtime -$AGE | sort)
+echo "$(date) - Including all files newer than $AGE days of non-0 size." >> $LOGFILE
+TIMELAPSEFILES=$(find $BASEIMGDIR -type f -size +1k -mtime -$AGE | sort)
 
 echo "$(date) - Starting timelapse-creation" >> $LOGFILE
 echo "$(date) - Cropping images if too large" >> $LOGFILE
@@ -64,7 +64,7 @@ count=0
 for IMG in $TIMELAPSEFILES; do
         NEW=$(printf "FRAME_%05d.jpg" $count)
         let count=$count+1
-        convert -crop 1280x960+0+0 -gravity center $IMG $TMPDIR/$NEW
+        convert -size 1280x960+0+0 -gravity center $IMG $TMPDIR/$NEW
 done
 
 WEBM="$VIDDIR/timelapse.webm"
