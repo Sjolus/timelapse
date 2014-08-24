@@ -2,7 +2,6 @@
 set -o nounset
 set -o errexit
 
-
 # necessary declarations
 BASEDIR=$(dirname $0)
 DATE=$(date +%Y_%m_%d-%H_%M_%S)
@@ -30,8 +29,8 @@ BASEDIR="$TIMELAPSEPATH/$PROJECT"
 TMPDIR="$BASEDIR/tmp"
 BASEIMGDIR="$BASEDIR/img"
 IMGDIR="$BASEIMGDIR/$YEAR/$MONTH/$DAY"
-VIDDIR="$BASEDIR/video"
 FILE="$IMGDIR/$DATE.jpg"
+VIDDIR="$BASEDIR/video"
 WGETTHIS="$(echo $URL)"
 LOGFILE="$BASEDIR/$PROJECT.log"
 
