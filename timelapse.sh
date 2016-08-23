@@ -40,8 +40,8 @@ mkdir -p $IMGDIR
 
 echo "$(date) - Initiating Timelapse run" >> $LOGFILE
 echo "$(date) - wget and jpegoptim-run" >> $LOGFILE
-wget -nv $WGETTHIS -O $FILE &>> $LOGFILE
-jpegoptim --quiet --max=50 $FILE >> $LOGFILE
+wget -nv $WGETTHIS -O $FILE &>> $LOGFILE 2>&1
+jpegoptim --quiet --max=50 $FILE >> $LOGFILE 2>&1
 
 echo "$(date) - Compiling list of images to use" >> $LOGFILE
 AGEARGUMENT=${2:-}
@@ -63,7 +63,7 @@ count=0
 for IMG in $TIMELAPSEFILES; do
         NEW=$(printf "FRAME_%05d.jpg" $count)
         let count=$count+1
-        convert -size 1280x960+0+0 -gravity center $IMG $TMPDIR/$NEW
+        convert -size 1920x1080+0+0 -gravity center $IMG $TMPDIR/$NEW >> $LOGFILE 2>&1
 done
 
 WEBM="$VIDDIR/timelapse.webm"
